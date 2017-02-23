@@ -7,43 +7,57 @@ using Nancy.ViewEngines.Razor;
 namespace BestRestaurants
 {
 
-    public class HomeModule : NancyModule
+  public class HomeModule : NancyModule
+  {
+    public HomeModule()
     {
-      public HomeModule()
+      Get["/"] = _ =>
       {
-        Get["/"] = _ =>
-        {
-            return View["index.cshtml"];
-        };
+        return View["index.cshtml"];
+      };
 
-        Get["/cuisines"] = _ =>
-        {
-            List<Cuisine> allCuisines = Cuisine.GetAll();
-            return View["cuisines.cshtml", allCuisines];
-        };
+      Get["/cuisines"] = _ =>
+      {
+        return View["cuisines.cshtml", ModelMaker()];
+      };
 
-        Post["/cuisines"] = _ =>
-        {
-            Cuisine newthingie = new Cuisine(Request.Form["cuisine"]);
-            newthingie.Save();
-            List<Cuisine> allCuisines = Cuisine.GetAll();
-            return View["cuisines.cshtml", allCuisines];
-        };
+      Post["/cuisines"] = _ =>
+      {
+        Cuisine newCuisine = new Cuisine(Request.Form["cuisine"]);
+        newCuisine.Save();
+        return View["cuisines.cshtml", ModelMaker()];
+      };
 
-        Get["/restaurants"] = _ =>
-        {
-            List<Rest> allRests = Rest.GetAll();
-            return View["restaurants.cshtml", allRests];
-        };
+      Get["/cuisines/{id}"]= parameters =>
+      {
+        Cuisine newCuisine = Cuisine.Find(parameters.id);
+        Dictionary<string, object> model = ModelMaker();
+        model.Add("Cuisine Object", newCuisine);
+        model.Add("Restaurant List", Rest.GetByCuisine(newCuisine.GetId()));
+        return View["cuisine.cshtml", model];
 
-        Post["/restaurants"] = _ =>
-        {
-            Rest newthingie = new Rest(Request.Form["rest"], Request.Form["id_c"]);
-            newthingie.Save();
-            List<Rest> allRests = Rest.GetAll();
-            return View["restaurants.cshtml", allRests];
-        };
+      };
 
-      }
+      Get["/restaurants"] = _ =>
+      {
+        return View["restaurants.cshtml", ModelMaker()];
+      };
+
+      Post["/restaurants"] = _ =>
+      {
+        Rest newRest = new Rest(Request.Form["rest"], Request.Form["id_c"]);
+        newRest.Save();
+        return View["restaurants.cshtml", ModelMaker()];
+      };
     }
+    public static Dictionary<string, object> ModelMaker()
+    {
+      Dictionary<string, object> model = new Dictionary<string, object>{};
+      model.Add("Cuisines", Cuisine.GetAll());
+      model.Add("Restaurants", Rest.GetAll());
+      return model;
+    }
+
+
+  }
 }

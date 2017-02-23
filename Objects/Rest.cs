@@ -124,6 +124,76 @@ namespace BestRestaurants
             }
         }
 
+        public string GetCuisineName(int id)
+        {
+          SqlConnection conn = DB.Connection();
+          conn.Open();
+
+          SqlCommand cmd = new SqlCommand("SELECT * FROM cuisines WHERE id = @CuisineId;", conn);
+          SqlParameter cuisineIdParameter = new SqlParameter();
+          cuisineIdParameter.ParameterName = "@CuisineId";
+          cuisineIdParameter.Value = id.ToString();
+          cmd.Parameters.Add(cuisineIdParameter);
+          SqlDataReader rdr = cmd.ExecuteReader();
+
+          string foundCuisineName = null;
+
+          while(rdr.Read())
+          {
+            foundCuisineName = rdr.GetString(1);
+          }
+
+
+          if (rdr != null)
+          {
+            rdr.Close();
+          }
+          if (conn != null)
+          {
+            conn.Close();
+          }
+          return foundCuisineName;
+        }
+
+        public static List<Rest> GetByCuisine(int id)
+        {
+
+            List<Rest> foundByCuisineRests = new List<Rest>{};
+            SqlConnection conn = DB.Connection();
+            conn.Open();
+
+            SqlCommand cmd = new SqlCommand("SELECT * FROM restaurants WHERE id_cuisine = @CuisineId;", conn);
+
+            SqlParameter cuisineParameter = new SqlParameter();
+            cuisineParameter.ParameterName = "@CuisineId";
+            cuisineParameter.Value = id;
+            cmd.Parameters.Add(cuisineParameter);
+
+            SqlDataReader rdr = cmd.ExecuteReader();
+
+            while(rdr.Read())
+            {
+                int foundId = rdr.GetInt32(0);
+                string foundName = rdr.GetString(1);
+                int foundCuisineId = rdr.GetInt32(2);
+                Rest foundRest = new Rest(foundName, foundCuisineId, foundId);
+                foundByCuisineRests.Add(foundRest);
+            }
+
+            if(rdr != null)
+            {
+                rdr.Close();
+            }
+            if(conn != null)
+            {
+                conn.Close();
+            }
+
+            return foundByCuisineRests;
+
+
+        }
+
         public static Rest Find(int id)
         {
             SqlConnection conn = DB.Connection();

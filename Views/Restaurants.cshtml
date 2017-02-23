@@ -1,16 +1,29 @@
+@{
+  Layout = "Shared/_Layout.cshtml";
+}
+
 <h1>Restaurants!</h1>
 
 <form action="/restaurants" method="post">
   <label for="rest">Add New Restaurant!!</label>
   <input id="rest" type="text" name="rest">
   <label for="id_c">Add its Cuisine!!</label>
-  <input id="id_c" type="number" name="id_c">
+  <select name="id_c" id="id_c">
+    @foreach (var Cuisine in Model["Cuisines"])
+    {
+      <option value="@Cuisine.GetId()">@Cuisine.GetCuisine()</option>
+    }
+  </select>
 
   <button type="submit" name="button">Add!</button>
 </form>
 <ul>
-  @foreach (var restaurant in Model)
+  @foreach (var restaurant in Model["Restaurants"])
   {
-  <li> @restaurant.GetName() , @restaurant.GetCuisineId()</li>
+  <li> @restaurant.GetName() -- @restaurant.GetCuisineName(@restaurant.GetCuisineId())</li>
   }
+
 </ul>
+
+<a href="/">Home</a>
+<a href="/cuisines">View Cuisines</a>

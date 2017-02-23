@@ -1,0 +1,12 @@
+@{
+  Layout = "Shared/_Layout.cshtml";
+}
+
+@foreach (var restaurant in Model["Restaurant List"])
+{
+<li>@restaurant.GetName()</li>
+}
+
+<a href="/">Home</a>
+<a href="/restaurants">View Restaurants</a>
+<a href="/cuisines">View Cuisines</a>

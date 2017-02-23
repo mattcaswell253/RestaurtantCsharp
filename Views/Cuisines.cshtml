@@ -1,5 +1,8 @@
-<h1>Cuisines!</h1>
+@{
+  Layout = "Shared/_Layout.cshtml";
+}
 
+<h1>Cuisines!</h1>
 <form action="/cuisines" method="post">
   <label for="cuisine">Add New Cuisine!!</label>
   <input id="cuisine" type="text" name="cuisine">
@@ -7,8 +10,10 @@
   <button type="submit" name="button">Add!</button>
 </form>
 <ul>
-  @foreach (var cuisine in Model)
+  @foreach (var cuisine in Model["Cuisines"])
   {
-  <li> @cuisine.GetCuisine()</li>
+  <li><a href="/cuisines/@cuisine.GetId()">@cuisine.GetCuisine()</a></li>
   }
 </ul>
+<a href="/">Home</a>
+<a href="/restaurants">View Restaurants</a>
