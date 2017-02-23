@@ -66,6 +66,21 @@ namespace BestRestaurants
             Assert.Equal(testId, result);
         }
 
+        [Fact]
+       public void Test_Find_FindsRestInDatabase()
+       {
+         //Arrange
+         Rest testRest = new Rest("Jimmy Johns", 1);
+         testRest.Save();
+
+         //Act
+         Rest foundRest = Rest.Find(testRest.GetId());
+
+         //Assert
+         Assert.Equal(testRest, foundRest);
+       }
+
+
         public void Dispose()
         {
             Rest.DeleteAll();

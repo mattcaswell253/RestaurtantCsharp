@@ -124,6 +124,41 @@ namespace BestRestaurants
             }
         }
 
+        public static Rest Find(int id)
+        {
+            SqlConnection conn = DB.Connection();
+            conn.Open();
+
+            SqlCommand cmd = new SqlCommand("SELECT * FROM restaurants WHERE id = @RestId;", conn);
+            SqlParameter restIdParameter = new SqlParameter();
+            restIdParameter.ParameterName = "@RestId";
+            restIdParameter.Value = id.ToString();
+            cmd.Parameters.Add(restIdParameter);
+            SqlDataReader rdr = cmd.ExecuteReader();
+
+            int foundRestId = 0;
+            string foundRestName = null;
+            int foundRestCuisineId = 0;
+
+            while(rdr.Read())
+            {
+                foundRestId = rdr.GetInt32(0);
+                foundRestName = rdr.GetString(1);
+                foundRestCuisineId = rdr.GetInt32(2);
+            }
+            Rest foundRest = new Rest(foundRestName, foundRestCuisineId, foundRestId);
+
+            if (rdr != null)
+            {
+                rdr.Close();
+            }
+            if (conn != null)
+            {
+                conn.Close();
+            }
+            return foundRest;
+        }
+
         public static void DeleteAll()
         {
             SqlConnection conn = DB.Connection();

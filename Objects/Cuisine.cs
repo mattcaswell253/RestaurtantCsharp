@@ -31,14 +31,14 @@ namespace BestRestaurants
     }
 
     public override int GetHashCode()
-   {
-        return this.GetCuisine().GetHashCode();
-   }
+    {
+      return this.GetCuisine().GetHashCode();
+    }
 
-   public int GetId()
-   {
-     return _id;
-   }
+    public int GetId()
+    {
+      return _id;
+    }
 
     public string GetCuisine()
     {
@@ -81,29 +81,64 @@ namespace BestRestaurants
 
     public void Save()
     {
-        SqlConnection conn = DB.Connection();
-        conn.Open();
+      SqlConnection conn = DB.Connection();
+      conn.Open();
 
-        SqlCommand cmd = new SqlCommand("INSERT INTO cuisines (cuisine) OUTPUT INSERTED.id VALUES (@Cuisinename);", conn);
+      SqlCommand cmd = new SqlCommand("INSERT INTO cuisines (cuisine) OUTPUT INSERTED.id VALUES (@Cuisinename);", conn);
 
-        SqlParameter nameParameter = new SqlParameter();
-        nameParameter.ParameterName = "@Cuisinename";
-        nameParameter.Value = this.GetCuisine();
-        cmd.Parameters.Add(nameParameter);
-        SqlDataReader rdr = cmd.ExecuteReader();
+      SqlParameter nameParameter = new SqlParameter();
+      nameParameter.ParameterName = "@Cuisinename";
+      nameParameter.Value = this.GetCuisine();
 
-        while(rdr.Read())
-        {
-            this._id = rdr.GetInt32(0);
-        }
-        if (rdr != null)
-        {
-            rdr.Close();
-        }
-        if (conn != null)
-        {
-            conn.Close();
-        }
+      cmd.Parameters.Add(nameParameter);
+
+      SqlDataReader rdr = cmd.ExecuteReader();
+
+      while(rdr.Read())
+      {
+        this._id = rdr.GetInt32(0);
+      }
+      if (rdr != null)
+      {
+        rdr.Close();
+      }
+      if (conn != null)
+      {
+        conn.Close();
+      }
+    }
+
+    public static Cuisine Find(int id)
+    {
+      SqlConnection conn = DB.Connection();
+      conn.Open();
+
+      SqlCommand cmd = new SqlCommand("SELECT * FROM cuisines WHERE id = @CuisineId;", conn);
+      SqlParameter cuisineIdParameter = new SqlParameter();
+      cuisineIdParameter.ParameterName = "@CuisineId";
+      cuisineIdParameter.Value = id.ToString();
+      cmd.Parameters.Add(cuisineIdParameter);
+      SqlDataReader rdr = cmd.ExecuteReader();
+
+      int foundCuisineId = 0;
+      string foundCuisineName = null;
+
+      while(rdr.Read())
+      {
+        foundCuisineId = rdr.GetInt32(0);
+        foundCuisineName = rdr.GetString(1);
+      }
+      Cuisine foundCuisine = new Cuisine(foundCuisineName, foundCuisineId);
+
+      if (rdr != null)
+      {
+        rdr.Close();
+      }
+      if (conn != null)
+      {
+        conn.Close();
+      }
+      return foundCuisine;
     }
 
     public static void DeleteAll()

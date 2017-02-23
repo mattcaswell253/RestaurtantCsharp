@@ -54,7 +54,7 @@ namespace BestRestaurants
     public void CuisineTest_Save_AssignsIdToObject()
     {
         //Arrange
-        Cuisine testCuisine = new Cuisine("Jimmy Johns", 1);
+        Cuisine testCuisine = new Cuisine("Sandwhich Shop");
 
         //Act
         testCuisine.Save();
@@ -66,6 +66,20 @@ namespace BestRestaurants
         //Assert
         Assert.Equal(testId, result);
     }
+
+    [Fact]
+   public void Test_Find_FindsCuisineInDatabase()
+   {
+     //Arrange
+     Cuisine testCuisine = new Cuisine("Sandwhich Shop");
+     testCuisine.Save();
+
+     //Act
+     Cuisine foundCuisine = Cuisine.Find(testCuisine.GetId());
+
+     //Assert
+     Assert.Equal(testCuisine, foundCuisine);
+   }
 
     public void Dispose()
     {

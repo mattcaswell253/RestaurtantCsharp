@@ -1,0 +1,16 @@
+<h1>Restaurants!</h1>
+
+<form action="/restaurants" method="post">
+  <label for="rest">Add New Restaurant!!</label>
+  <input id="rest" type="text" name="rest">
+  <label for="id_c">Add its Cuisine!!</label>
+  <input id="id_c" type="number" name="id_c">
+
+  <button type="submit" name="button">Add!</button>
+</form>
+<ul>
+  @foreach (var restaurant in Model)
+  {
+  <li> @restaurant.GetName() , @restaurant.GetCuisineId()</li>
+  }
+</ul>
